@@ -35,6 +35,17 @@
   .cta{text-align:center}
   .cta p{color:var(--muted);max-width:50ch;margin:0 auto}
   footer{padding:28px 0 40px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .calc{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));align-items:start}
+  .calc .card{display:grid;gap:18px}
+  .field label{display:flex;justify-content:space-between;gap:12px;font-weight:600;font-size:16px}
+  .field label output{color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .field input[type=range]{width:100%;margin-top:8px;accent-color:var(--accent)}
+  .field small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+  .result{background:var(--accent);color:#fff;border-radius:14px;padding:24px;display:grid;gap:6px}
+  .result .big{font-size:clamp(34px,7vw,46px);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+  .result p{color:#d8efe9;font-size:16px}
+  .result .yr{font-weight:700;color:#fff}
+  .note{font-size:14px;color:var(--muted);margin-top:14px;max-width:62ch}
 </style>
 </head>
 <body>
@@ -47,6 +58,36 @@
     <a class="btn" href="https://cal.com/jobcatch/demo">Book a 10-minute demo</a>
     <div class="sub">Hear it answer as <em>your</em> business on a quick video call. No cost, no obligation.</div>
   </div>
+
+  <section id="missed-calls">
+    <div class="wrap">
+      <h2>What are missed calls costing you?</h2>
+      <div class="calc">
+        <div class="card">
+          <div class="field">
+            <label for="mc">Calls you miss a week <output id="mc-out">5</output></label>
+            <input id="mc" type="range" min="1" max="30" step="1" value="5">
+            <small>On the tools, driving, on another call, after hours.</small>
+          </div>
+          <div class="field">
+            <label for="jv">Your average job <output id="jv-out">$400</output></label>
+            <input id="jv" type="range" min="100" max="3000" step="50" value="400">
+          </div>
+          <div class="field">
+            <label for="lo">Out of 10 missed callers, how many ring the next plumber? <output id="lo-out">5</output></label>
+            <input id="lo" type="range" min="1" max="10" step="1" value="5">
+            <small>Most people with a leak don't wait for a call back.</small>
+          </div>
+        </div>
+        <div class="result" aria-live="polite">
+          <p>Work going to other plumbers</p>
+          <div class="big" id="month">$4,330</div>
+          <p>a month, or <span class="yr" id="year">$52,000</span> a year.</p>
+        </div>
+      </div>
+      <p class="note">Your numbers, your estimate. Move the sliders to match your business. JobCatch answers those calls so the job comes to you.</p>
+    </div>
+  </section>
 
   <section>
     <div class="wrap">
@@ -92,5 +133,22 @@
 </main>
 
 <footer><div class="wrap">© 2026 JobCatch · <a href="mailto:luca@jobcatchhq.com">luca@jobcatchhq.com</a></div></footer>
+<script>
+(function(){
+  var mc=document.getElementById('mc'),jv=document.getElementById('jv'),lo=document.getElementById('lo');
+  var f=function(n){return '$'+Math.round(n).toLocaleString('en-AU')};
+  function up(){
+    var m=+mc.value,j=+jv.value,l=+lo.value;
+    document.getElementById('mc-out').textContent=m;
+    document.getElementById('jv-out').textContent=f(j);
+    document.getElementById('lo-out').textContent=l;
+    var month=m*(52/12)*(l/10)*j;
+    document.getElementById('month').textContent=f(Math.round(month/10)*10);
+    document.getElementById('year').textContent=f(Math.round(month*12/100)*100);
+  }
+  [mc,jv,lo].forEach(function(el){el.addEventListener('input',up)});
+  up();
+})();
+</script>
 </body>
 </html>
